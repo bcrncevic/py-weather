@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Pocetna - PyWearther</title>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-500 py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-white text-lg font-bold">Početna</a>
+            <nav>
+                {% if session['prijavljen'] %}
+                <a href="/" class="ml-4 text-white">Osvježi podatke</a>
+                <a href="/odjava" class="ml-4 text-white">Odjava</a>
+                {% else %}
+                    <a href="/prijava" class="ml-4 text-white">Prijava</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    <div class="container mx-auto py-8">
+        <h1 class="text-4xl font-bold mb-8">Vremenska Prognoza</h1>
+
+        <form method="POST" action="/">
+            <label for="grad" class="text-lg">Unesite grad:</label>
+            <input type="text" id="grad" name="grad" class="px-2 py-1 border border-gray-300 rounded">
+            <button type="submit" class="py-1 px-4 bg-blue-500 text-white rounded ml-2">Traži</button>
+        </form>
+
+        {% if greska %}
+        <div class="bg-red-200 text-red-800 py-2 px-4 rounded my-4">
+            {{ greska }}
+        </div>
+        {% else %}
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">Trenutno vrijeme u gradu {{ grad }}</h2>
+        <div class="bg-white p-4 rounded shadow">
+            <p class="text-lg">Temperatura: {{ trenutna_temperatura }}°C</p>
+            <p class="text-lg">Uvjeti: {{ trenutni_uvjeti }}</p>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-2xl font-semibold mb-4">Prognoza za sljedeća 3 dana</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {% for dan in prognoza %}
+                <div class="bg-white p-4 rounded shadow">
+                    <p class="text-lg font-semibold">{{ dan.datum }}</p>
+                    <p class="text-lg">Prosječna temperatura: {{ dan.prosjecna_temperatura }}°C</p>
+                    <p class="text-lg">Ukupna količina padalina: {{ dan.ukupne_oborine }} mm</p>
+                    <p class="text-lg">Prosječni tlak zraka: {{ dan.prosjecni_tlak }} hPa</p>
+                    <p class="text-lg">Brzina vjetra: {{ dan.brzina_vjetra }} km/h</p>
+                    <p class="text-lg">Smjer vjetra: {{ dan.smjer_vjetra }}</p>
+                    <p class="text-lg">Uvjeti: {{ dan.uvjeti }}</p>
+                    <img class="mt-2" src="{{ dan.ikona }}" alt="Ikona">
+                </div>
+                {% endfor %}
+            </div>
+            <div class="flex flex-col justify-center my-4 gap-4">
+                <h3 class="font-bold text-2xl">Prosjek temperature</h3>
+                <img width="400" src="{{ url_for('static', filename='img/prognoza.png') }}" alt="Prognoza za sljedećih tri dana">
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-2xl font-semibold mb-4">Prognoza za sljedećih 7 dana</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {% for dan in tjedna_prognoza %}
+                <div class="bg-white p-4 rounded shadow">
+                    <p class="text-lg font-semibold">{{ dan.datum }}</p>
+                    <p class="text-lg">Prosječna temperatura: {{ dan.prosjecna_temperatura }}°C</p>
+                    <img class="mt-2" src="{{ dan.ikona }}" alt="Ikona">
+                </div>
+                {% endfor %}
+            </div>
+            <div class="flex flex-col justify-center my-4 gap-4">
+                <h3 class="font-bold text-2xl">Prosjek temperature</h3>
+                <img width="400" src="{{ url_for('static', filename='img/tjedna_prognoza.png') }}" alt="Prognoza za sljedećih sedam dana">
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>
