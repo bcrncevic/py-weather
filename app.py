@@ -117,33 +117,6 @@ def vrijeme():
                            tjedna_prognoza=tjedna_prognoza, prognoza_slika_path=prognoza_slika_path,
                            tjedna_prognoza_slika_path=tjedna_prognoza_slika_path)
 
-    try:
-        response = requests.get(url)
-        data = response.json()
-
-        # Provjera uspješnosti odgovora API-ja
-        if 'error' in data:
-            error_message = data['error']['message']
-            return {'error': error_message}
-
-        # Dohvaćanje relevantnih podataka o vremenskoj prognozi
-        current_weather = data['current']
-        temperature = current_weather['temp_c']
-        wind = current_weather['wind_kph']
-        humidity = current_weather['humidity']
-
-        weather_data = {
-            'city': 'Split',
-            'temperature': temperature,
-            'wind': wind,
-            'humidity': humidity
-        }
-
-        return weather_data
-
-    except requests.exceptions.RequestException as e:
-        return {'error': str(e)}
-
 @app.route('/')
 def index():
     return vrijeme()
